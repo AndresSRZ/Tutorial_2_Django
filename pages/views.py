@@ -69,9 +69,13 @@ class ContactPageView(TemplateView):
         })
         return context
 
-class ProductForm(forms.Form):
-    name = forms.CharField(required=True)
-    price = forms.IntegerField(required=True)
+class ProductForm(forms.ModelForm):
+    #name = forms.CharField(required=True)
+    #price = forms.IntegerField(required=True)
+
+    class Meta:
+        model = Product
+        fields = ['name', 'price']
 
     def clean_price(self):
         price = self.cleaned_data.get("price")
@@ -93,14 +97,15 @@ class ProductCreateView(View):
     def post(self, request):
         form = ProductForm(request.POST)
         if form.is_valid():
-            new_product = {
+            form.save()
+            '''new_product = {
                 "id": str(len(Product.products) + 1), 
                 "name": form.cleaned_data["name"],
                 "description": "New Product",
                 "price": form.cleaned_data["price"]
             }
-            Product.products.append(new_product)
-            messages.success(request, "Product created!") 
+            Product.products.append(new_product)'''
+            messages.success(request, "Product created!")
 
             return redirect('success')
         else:
